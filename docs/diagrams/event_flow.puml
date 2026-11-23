@@ -1,0 +1,22 @@
+@startuml
+title Event-driven alert flow
+start
+:Fetch latest price (provider);
+:Save PriceSnapshot;
+:Load untriggered alerts for symbol;
+while (More alerts?) is (yes)
+  if (Condition met? ABOVE: price >= target / BELOW: price <= target) then (yes)
+    if (Atomic claim succeeds?) then (yes)
+      :Publish StockPriceIncreasedEvent / PriceFallsBelowThresholdEvent;
+      :NotificationService stores one notification;
+      if (Handler failed?) then (yes)
+        :Release claim (alert re-armed);
+      endif
+    else (no)
+      :Skip (already triggered);
+    endif
+  endif
+endwhile (no)
+:Return triggered_alerts to UI;
+stop
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+title EquiTrack deployment (Minikube)
+actor "User browser" as B
+node "Minikube cluster" {
+  node "Service: equitrack-service (NodePort 30080)" as S
+  node "Pod: equitrack-app" {
+    component "Docker container\nGunicorn + Flask" as F
+  }
+  node "Service: mongo (ClusterIP)" as MS
+  node "Pod: mongo" {
+    database "MongoDB 7" as M
+  }
+  database "PersistentVolumeClaim\nmongo-pvc" as PVC
+  artifact "ConfigMap equitrack-config" as CM
+  artifact "Secret equitrack-secrets" as SE
+}
+cloud "Alpha Vantage API" as AV
+node "Jenkins" as J
+node "GitHub" as G
+
+B --> S : HTTP
+S --> F
+F --> MS : MONGODB_URI
+MS --> M
+M --> PVC
+F ..> AV : HTTPS (API key from Secret)
+CM ..> F
+SE ..> F
+G --> J : webhook / SCM poll
+J --> F : build image, load, kubectl rollout
+@enduml

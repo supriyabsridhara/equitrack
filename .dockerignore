@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+reports
+tests
+dev
+docs
+k8s
+Jenkinsfile
+docker-compose.yml

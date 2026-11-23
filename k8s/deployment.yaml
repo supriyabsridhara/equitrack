@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: equitrack-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: equitrack }
+  template:
+    metadata:
+      labels: { app: equitrack }
+    spec:
+      containers:
+        - name: app                       # Jenkins runs: kubectl set image deployment/equitrack-app app=...
+          image: equitrack:latest
+          imagePullPolicy: IfNotPresent   # image is loaded into Minikube, not pulled from a registry
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef: { name: equitrack-config }
+            - secretRef: { name: equitrack-secrets }
+          readinessProbe:
+            httpGet: { path: /ready, port: 5000 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /health, port: 5000 }
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 384Mi }

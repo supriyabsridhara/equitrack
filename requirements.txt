@@ -1,0 +1,10 @@
+# Runtime
+Flask>=3.0
+pymongo>=4.6
+requests>=2.31
+python-dotenv>=1.0
+gunicorn>=22.0
+# Test / CI (kept here so Jenkins can install everything with one command)
+pytest>=8.0
+mongomock>=4.1
+flake8>=7.0

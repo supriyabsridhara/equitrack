@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: equitrack-config
+data:
+  FLASK_ENV: "production"
+  DEFAULT_USER_ID: "local-user"
+  DEFAULT_CURRENCY: "INR"

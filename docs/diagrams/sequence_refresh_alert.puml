@@ -1,0 +1,39 @@
+@startuml
+title Refresh price and trigger a target-price alert
+actor Investor
+participant "Frontend (app.js)" as FE
+participant "Flask Controller" as C
+participant StockService as SS
+participant StockDataProvider as P
+participant StockRepository as SR
+participant AlertService as AS
+participant AlertRepository as AR
+participant EventDispatcher as ED
+participant NotificationService as NS
+participant NotificationRepository as NR
+
+Investor -> FE : click "Refresh price"
+FE -> C : POST /api/stocks/AAPL/refresh
+C -> SS : refresh_price("AAPL")
+SS -> P : get_latest_price("AAPL")
+P --> SS : price, timestamp, source
+SS -> SR : save_price_snapshot()
+SS -> AS : notify_price_update(symbol, price, prev, source, ts)
+AS -> AR : find_active_for_symbol("AAPL")
+AR --> AS : untriggered alerts
+loop each alert whose condition is met
+  AS -> AR : claim_trigger(alert_id)  (atomic False -> True)
+  alt claim succeeded
+    AS -> ED : publish(StockPriceIncreasedEvent)
+    ED -> NS : handle_event(event)
+    NS -> NR : create(notification)
+    NR --> NS : notification
+  else already triggered
+    AS -> AS : skip (no duplicate)
+  end
+end
+AS --> SS : created notifications
+SS --> C : stock + triggered_alerts
+C --> FE : 200 JSON
+FE --> Investor : toast, badge update, alert shown as Triggered
+@enduml
