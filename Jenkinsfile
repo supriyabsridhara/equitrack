@@ -20,17 +20,7 @@ pipeline {
         stage('Checkout') {
             steps { checkout scm }
         }
-
-        stage('Install dependencies') {
-            steps {
-                sh '''
-                    python3 -m venv "$VENV"
-                    . "$VENV/bin/activate"
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                '''
-            }
-        }
+        
         stage('Install dependencies') {
             steps {
                 sh '''
@@ -41,7 +31,7 @@ pipeline {
                 '''
              }
         }
-        
+
         stage('Lint') {
             steps { sh '. "$VENV/bin/activate" && flake8 app tests dev' }
         }
