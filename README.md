@@ -41,3 +41,11 @@ minikube service equitrack-service
 ## Jenkins
 Create a pipeline job from this repo's `Jenkinsfile`. Add a *Secret text* credential with id `alpha-vantage-key`.
 The agent needs Python 3, Docker, `kubectl` and `minikube` on its PATH.
+## Local run requirements
+
+Running the real Flask application with `app:create_app()` requires a
+reachable MongoDB instance. Set `MONGODB_URI` in `.env` before starting it.
+
+For an in-memory demo that does not require MongoDB, use:
+
+    python -m dev.mock_server

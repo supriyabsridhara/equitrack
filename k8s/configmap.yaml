@@ -6,3 +6,5 @@ data:
   FLASK_ENV: "production"
   DEFAULT_USER_ID: "local-user"
   DEFAULT_CURRENCY: "INR"
+  STOCK_DATA_PROVIDER: "mock"
+  ENABLE_PRICE_OVERRIDE: "true"
