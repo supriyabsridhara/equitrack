@@ -31,7 +31,17 @@ pipeline {
                 '''
             }
         }
-
+        stage('Install dependencies') {
+            steps {
+                sh '''
+                    python3.12 -m venv "$VENV"
+                    . "$VENV/bin/activate"
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+             }
+        }
+        
         stage('Lint') {
             steps { sh '. "$VENV/bin/activate" && flake8 app tests dev' }
         }
